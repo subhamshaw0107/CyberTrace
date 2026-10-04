@@ -1,0 +1,30 @@
+# Identities for the PS 26237 provenance network (generated offline by `cryptogen`).
+# Four administratively separate organisations, one peer each, plus an ordering org.
+OrdererOrgs:
+  - Name: Orderer
+    Domain: orderer.ps26237.local
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: SenderOrg
+    Domain: sender.ps26237.local
+    EnableNodeOUs: true
+    Template: { Count: 1 }
+    Users: { Count: 1 }
+  - Name: AuditorOrg
+    Domain: auditor.ps26237.local
+    EnableNodeOUs: true
+    Template: { Count: 1 }
+    Users: { Count: 1 }
+  - Name: SecurityOrg
+    Domain: security.ps26237.local
+    EnableNodeOUs: true
+    Template: { Count: 1 }
+    Users: { Count: 1 }
+  - Name: BackupOrg
+    Domain: backup.ps26237.local
+    EnableNodeOUs: true
+    Template: { Count: 1 }
+    Users: { Count: 1 }

@@ -1,0 +1,157 @@
+# PS 26237 provenance ledger: 1 orderer + 4 organisation peers (Fabric 2.5),
+# one chaincode-as-a-service container per organisation, and a CLI container.
+# Managed by ledger/fabric/network.sh -- do not `docker compose up` directly.
+name: ps26237
+
+x-peer: &peer
+  image: hyperledger/fabric-peer:2.5
+  command: peer node start
+  networks: [ps26237]
+  depends_on: [orderer.orderer.ps26237.local]
+
+x-peer-env: &peer-env
+  CORE_PEER_LISTENADDRESS: 0.0.0.0:7051
+  CORE_PEER_CHAINCODELISTENADDRESS: 0.0.0.0:7052
+  CORE_PEER_TLS_ENABLED: "true"
+  CORE_PEER_TLS_CERT_FILE: /etc/hyperledger/fabric/tls/server.crt
+  CORE_PEER_TLS_KEY_FILE: /etc/hyperledger/fabric/tls/server.key
+  CORE_PEER_TLS_ROOTCERT_FILE: /etc/hyperledger/fabric/tls/ca.crt
+  CORE_PEER_MSPCONFIGPATH: /etc/hyperledger/fabric/msp
+  CORE_LEDGER_STATE_STATEDATABASE: goleveldb
+  CORE_PEER_GATEWAY_ENABLED: "true"
+  FABRIC_LOGGING_SPEC: INFO
+
+x-cc: &cc
+  image: ps26237/provenance-cc:latest
+  networks: [ps26237]
+  environment: &cc-env
+    CHAINCODE_SERVER_ADDRESS: 0.0.0.0:9999
+
+services:
+  orderer.orderer.ps26237.local:
+    image: hyperledger/fabric-orderer:2.5
+    container_name: orderer.orderer.ps26237.local
+    networks: [ps26237]
+    environment:
+      ORDERER_GENERAL_LISTENADDRESS: 0.0.0.0
+      ORDERER_GENERAL_LISTENPORT: "7050"
+      ORDERER_GENERAL_LOCALMSPID: OrdererMSP
+      ORDERER_GENERAL_LOCALMSPDIR: /var/hyperledger/orderer/msp
+      ORDERER_GENERAL_TLS_ENABLED: "true"
+      ORDERER_GENERAL_TLS_PRIVATEKEY: /var/hyperledger/orderer/tls/server.key
+      ORDERER_GENERAL_TLS_CERTIFICATE: /var/hyperledger/orderer/tls/server.crt
+      ORDERER_GENERAL_TLS_ROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+      ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE: /var/hyperledger/orderer/tls/server.crt
+      ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY: /var/hyperledger/orderer/tls/server.key
+      ORDERER_GENERAL_CLUSTER_ROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+      ORDERER_GENERAL_BOOTSTRAPMETHOD: none
+      ORDERER_CHANNELPARTICIPATION_ENABLED: "true"
+      ORDERER_ADMIN_TLS_ENABLED: "true"
+      ORDERER_ADMIN_TLS_CERTIFICATE: /var/hyperledger/orderer/tls/server.crt
+      ORDERER_ADMIN_TLS_PRIVATEKEY: /var/hyperledger/orderer/tls/server.key
+      ORDERER_ADMIN_TLS_ROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+      ORDERER_ADMIN_TLS_CLIENTROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+      ORDERER_ADMIN_LISTENADDRESS: 0.0.0.0:7053
+      FABRIC_LOGGING_SPEC: INFO
+    volumes:
+      - ./crypto/ordererOrganizations/orderer.ps26237.local/orderers/orderer.orderer.ps26237.local/msp:/var/hyperledger/orderer/msp
+      - ./crypto/ordererOrganizations/orderer.ps26237.local/orderers/orderer.orderer.ps26237.local/tls:/var/hyperledger/orderer/tls
+      - orderer-data:/var/hyperledger/production/orderer
+
+  peer0.sender.ps26237.local:
+    <<: *peer
+    container_name: peer0.sender.ps26237.local
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.sender.ps26237.local
+      CORE_PEER_ADDRESS: peer0.sender.ps26237.local:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.sender.ps26237.local:7052
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.sender.ps26237.local:7051
+      CORE_PEER_LOCALMSPID: SenderOrgMSP
+    volumes:
+      - ./crypto/peerOrganizations/sender.ps26237.local/peers/peer0.sender.ps26237.local/msp:/etc/hyperledger/fabric/msp
+      - ./crypto/peerOrganizations/sender.ps26237.local/peers/peer0.sender.ps26237.local/tls:/etc/hyperledger/fabric/tls
+      - sender-data:/var/hyperledger/production
+
+  peer0.auditor.ps26237.local:
+    <<: *peer
+    container_name: peer0.auditor.ps26237.local
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.auditor.ps26237.local
+      CORE_PEER_ADDRESS: peer0.auditor.ps26237.local:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.auditor.ps26237.local:7052
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.auditor.ps26237.local:7051
+      CORE_PEER_LOCALMSPID: AuditorOrgMSP
+    volumes:
+      - ./crypto/peerOrganizations/auditor.ps26237.local/peers/peer0.auditor.ps26237.local/msp:/etc/hyperledger/fabric/msp
+      - ./crypto/peerOrganizations/auditor.ps26237.local/peers/peer0.auditor.ps26237.local/tls:/etc/hyperledger/fabric/tls
+      - auditor-data:/var/hyperledger/production
+
+  peer0.security.ps26237.local:
+    <<: *peer
+    container_name: peer0.security.ps26237.local
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.security.ps26237.local
+      CORE_PEER_ADDRESS: peer0.security.ps26237.local:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.security.ps26237.local:7052
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.security.ps26237.local:7051
+      CORE_PEER_LOCALMSPID: SecurityOrgMSP
+    volumes:
+      - ./crypto/peerOrganizations/security.ps26237.local/peers/peer0.security.ps26237.local/msp:/etc/hyperledger/fabric/msp
+      - ./crypto/peerOrganizations/security.ps26237.local/peers/peer0.security.ps26237.local/tls:/etc/hyperledger/fabric/tls
+      - security-data:/var/hyperledger/production
+
+  peer0.backup.ps26237.local:
+    <<: *peer
+    container_name: peer0.backup.ps26237.local
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.backup.ps26237.local
+      CORE_PEER_ADDRESS: peer0.backup.ps26237.local:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.backup.ps26237.local:7052
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.backup.ps26237.local:7051
+      CORE_PEER_LOCALMSPID: BackupOrgMSP
+    volumes:
+      - ./crypto/peerOrganizations/backup.ps26237.local/peers/peer0.backup.ps26237.local/msp:/etc/hyperledger/fabric/msp
+      - ./crypto/peerOrganizations/backup.ps26237.local/peers/peer0.backup.ps26237.local/tls:/etc/hyperledger/fabric/tls
+      - backup-data:/var/hyperledger/production
+
+  # One chaincode server per organisation: each org runs (and could audit) its own copy.
+  cc.sender.ps26237.local:
+    <<: *cc
+    container_name: cc.sender.ps26237.local
+    environment: { <<: *cc-env, CHAINCODE_ID: "${CCID_SENDER:-unset}" }
+  cc.auditor.ps26237.local:
+    <<: *cc
+    container_name: cc.auditor.ps26237.local
+    environment: { <<: *cc-env, CHAINCODE_ID: "${CCID_AUDITOR:-unset}" }
+  cc.security.ps26237.local:
+    <<: *cc
+    container_name: cc.security.ps26237.local
+    environment: { <<: *cc-env, CHAINCODE_ID: "${CCID_SECURITY:-unset}", PROVENANCE_ROGUE_FRAME: "${ROGUE_FRAME:-}" }
+  cc.backup.ps26237.local:
+    <<: *cc
+    container_name: cc.backup.ps26237.local
+    environment: { <<: *cc-env, CHAINCODE_ID: "${CCID_BACKUP:-unset}" }
+
+  cli:
+    image: hyperledger/fabric-tools:2.5
+    container_name: ps26237-cli
+    networks: [ps26237]
+    working_dir: /work
+    command: sleep infinity
+    volumes:
+      - ./:/work
+
+networks:
+  ps26237:
+    name: ps26237
+
+volumes:
+  orderer-data:
+  sender-data:
+  auditor-data:
+  security-data:
+  backup-data:

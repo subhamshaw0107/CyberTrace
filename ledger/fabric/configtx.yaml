@@ -1,0 +1,111 @@
+# Channel configuration for the PS 26237 provenance ledger (Fabric 2.5).
+# Endorsement policy for chaincode is set explicitly at commit time to
+# OutOf(3, ...) over the four organisations -- the 3-of-4 quorum.
+
+Organizations:
+  - &OrdererOrg
+    Name: OrdererMSP
+    ID: OrdererMSP
+    MSPDir: /work/crypto/ordererOrganizations/orderer.ps26237.local/msp
+    Policies:
+      Readers: { Type: Signature, Rule: "OR('OrdererMSP.member')" }
+      Writers: { Type: Signature, Rule: "OR('OrdererMSP.member')" }
+      Admins: { Type: Signature, Rule: "OR('OrdererMSP.admin')" }
+    OrdererEndpoints:
+      - orderer.orderer.ps26237.local:7050
+
+  - &SenderOrg
+    Name: SenderOrgMSP
+    ID: SenderOrgMSP
+    MSPDir: /work/crypto/peerOrganizations/sender.ps26237.local/msp
+    Policies: &SenderPolicies
+      Readers: { Type: Signature, Rule: "OR('SenderOrgMSP.admin', 'SenderOrgMSP.peer', 'SenderOrgMSP.client')" }
+      Writers: { Type: Signature, Rule: "OR('SenderOrgMSP.admin', 'SenderOrgMSP.client')" }
+      Admins: { Type: Signature, Rule: "OR('SenderOrgMSP.admin')" }
+      Endorsement: { Type: Signature, Rule: "OR('SenderOrgMSP.peer')" }
+
+  - &AuditorOrg
+    Name: AuditorOrgMSP
+    ID: AuditorOrgMSP
+    MSPDir: /work/crypto/peerOrganizations/auditor.ps26237.local/msp
+    Policies:
+      Readers: { Type: Signature, Rule: "OR('AuditorOrgMSP.admin', 'AuditorOrgMSP.peer', 'AuditorOrgMSP.client')" }
+      Writers: { Type: Signature, Rule: "OR('AuditorOrgMSP.admin', 'AuditorOrgMSP.client')" }
+      Admins: { Type: Signature, Rule: "OR('AuditorOrgMSP.admin')" }
+      Endorsement: { Type: Signature, Rule: "OR('AuditorOrgMSP.peer')" }
+
+  - &SecurityOrg
+    Name: SecurityOrgMSP
+    ID: SecurityOrgMSP
+    MSPDir: /work/crypto/peerOrganizations/security.ps26237.local/msp
+    Policies:
+      Readers: { Type: Signature, Rule: "OR('SecurityOrgMSP.admin', 'SecurityOrgMSP.peer', 'SecurityOrgMSP.client')" }
+      Writers: { Type: Signature, Rule: "OR('SecurityOrgMSP.admin', 'SecurityOrgMSP.client')" }
+      Admins: { Type: Signature, Rule: "OR('SecurityOrgMSP.admin')" }
+      Endorsement: { Type: Signature, Rule: "OR('SecurityOrgMSP.peer')" }
+
+  - &BackupOrg
+    Name: BackupOrgMSP
+    ID: BackupOrgMSP
+    MSPDir: /work/crypto/peerOrganizations/backup.ps26237.local/msp
+    Policies:
+      Readers: { Type: Signature, Rule: "OR('BackupOrgMSP.admin', 'BackupOrgMSP.peer', 'BackupOrgMSP.client')" }
+      Writers: { Type: Signature, Rule: "OR('BackupOrgMSP.admin', 'BackupOrgMSP.client')" }
+      Admins: { Type: Signature, Rule: "OR('BackupOrgMSP.admin')" }
+      Endorsement: { Type: Signature, Rule: "OR('BackupOrgMSP.peer')" }
+
+Capabilities:
+  Channel: &ChannelCapabilities { V2_0: true }
+  Orderer: &OrdererCapabilities { V2_0: true }
+  Application: &ApplicationCapabilities { V2_5: true }
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers: { Type: ImplicitMeta, Rule: "ANY Readers" }
+    Writers: { Type: ImplicitMeta, Rule: "ANY Writers" }
+    Admins: { Type: ImplicitMeta, Rule: "MAJORITY Admins" }
+    LifecycleEndorsement: { Type: ImplicitMeta, Rule: "MAJORITY Endorsement" }
+    Endorsement: { Type: ImplicitMeta, Rule: "MAJORITY Endorsement" }
+  Capabilities: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer.orderer.ps26237.local:7050
+  EtcdRaft:
+    Consenters:
+      - Host: orderer.orderer.ps26237.local
+        Port: 7050
+        ClientTLSCert: /work/crypto/ordererOrganizations/orderer.ps26237.local/orderers/orderer.orderer.ps26237.local/tls/server.crt
+        ServerTLSCert: /work/crypto/ordererOrganizations/orderer.ps26237.local/orderers/orderer.orderer.ps26237.local/tls/server.crt
+  BatchTimeout: 1s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers: { Type: ImplicitMeta, Rule: "ANY Readers" }
+    Writers: { Type: ImplicitMeta, Rule: "ANY Writers" }
+    Admins: { Type: ImplicitMeta, Rule: "MAJORITY Admins" }
+    BlockValidation: { Type: ImplicitMeta, Rule: "ANY Writers" }
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers: { Type: ImplicitMeta, Rule: "ANY Readers" }
+    Writers: { Type: ImplicitMeta, Rule: "ANY Writers" }
+    Admins: { Type: ImplicitMeta, Rule: "MAJORITY Admins" }
+  Capabilities: *ChannelCapabilities
+
+Profiles:
+  ProvenanceChannel:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations: [*OrdererOrg]
+      Capabilities: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations: [*SenderOrg, *AuditorOrg, *SecurityOrg, *BackupOrg]
+      Capabilities: *ApplicationCapabilities
