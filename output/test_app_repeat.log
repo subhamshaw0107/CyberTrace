@@ -1,0 +1,9 @@
+✅ PASS  Cropped + rescaled + JPEG leak traced to the right recipient  -- 6 bits differ, 22s
+✅ PASS  Screenshot of one PDF page (110 dpi, cropped, JPEG) traced to the right recipient  -- 14 bits differ, 22s
+SCORE: 24/24 application checks passed
+✅ PASS  Cropped + rescaled + JPEG leak traced to the right recipient  -- 5 bits differ, 24s
+✅ PASS  Screenshot of one PDF page (110 dpi, cropped, JPEG) traced to the right recipient  -- 10 bits differ, 22s
+SCORE: 24/24 application checks passed
+✅ PASS  Cropped + rescaled + JPEG leak traced to the right recipient  -- 6 bits differ, 23s
+❌ FAIL  Screenshot of one PDF page (110 dpi, cropped, JPEG) traced to the right recipient  -- None bits differ, 32s
+SCORE: 23/24 application checks passed

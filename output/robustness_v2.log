@@ -1,0 +1,231 @@
+Watermark robustness -- algorithm: v2-resync
+
+synthetic 512x512 512x512: PSNR 43.5 dB, mean |diff| 0.835, max 37
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.484  LOST
+   jpeg q50                                      BER 0.477  LOST
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.016  attributable
+   crop header + rescale x0.8 + jpeg q75         BER 0.500  LOST
+   print-and-scan simulation                     BER 0.047  attributable
+   photo-of-screen simulation                    BER 0.516  LOST
+
+PDF page render 150dpi 1240x1755: PSNR 35.2 dB, mean |diff| 1.317, max 107
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.000  exact
+   jpeg q50                                      BER 0.000  exact
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.000  exact
+   crop header + rescale x0.8 + jpeg q75         BER 0.023  attributable
+   print-and-scan simulation                     BER 0.531  LOST
+   photo-of-screen simulation                    BER 0.461  LOST
+
+scan 82092117.png 754x1000: PSNR 35.7 dB, mean |diff| 1.324, max 118
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.008  attributable
+   jpeg q50                                      BER 0.000  exact
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.008  attributable
+   crop header + rescale x0.8 + jpeg q75         BER 0.023  attributable
+   print-and-scan simulation                     BER 0.477  LOST
+   photo-of-screen simulation                    BER 0.539  LOST
+
+scan 82200067_0069.png 754x1000: PSNR 37.9 dB, mean |diff| 1.147, max 90
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.000  exact
+   jpeg q50                                      BER 0.023  attributable
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.031  attributable
+   crop header + rescale x0.8 + jpeg q75         BER 0.062  attributable
+   print-and-scan simulation                     BER 0.547  LOST
+   photo-of-screen simulation                    BER 0.562  LOST
+
+scan 82250337_0338.png 754x1000: PSNR 37.1 dB, mean |diff| 1.195, max 97
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.008  attributable
+   jpeg q50                                      BER 0.023  attributable
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.008  attributable
+   crop header + rescale x0.8 + jpeg q75         BER 0.078  attributable
+   print-and-scan simulation                     BER 0.422  LOST
+   photo-of-screen simulation                    BER 0.461  LOST
+
+scan 82251504.png 754x1000: PSNR 36.2 dB, mean |diff| 1.280, max 98
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.000  exact
+   jpeg q50                                      BER 0.000  exact
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.008  attributable
+   crop header + rescale x0.8 + jpeg q75         BER 0.047  attributable
+   print-and-scan simulation                     BER 0.000  exact
+   photo-of-screen simulation                    BER 0.523  LOST
+
+scan 82252956_2958.png 754x1000: PSNR 38.3 dB, mean |diff| 1.095, max 105
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.000  exact
+   jpeg q50                                      BER 0.023  attributable
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.000  exact
+   crop header + rescale x0.8 + jpeg q75         BER 0.031  attributable
+   print-and-scan simulation                     BER 0.023  attributable
+   photo-of-screen simulation                    BER 0.508  LOST
+
+scan 82253058_3059.png 754x1000: PSNR 37.0 dB, mean |diff| 1.232, max 88
+   baseline: lossless                            BER 0.000  exact
+   jpeg q90                                      BER 0.000  exact
+   jpeg q75                                      BER 0.000  exact
+   jpeg q60                                      BER 0.000  exact
+   jpeg q50                                      BER 0.000  exact
+   gaussian noise sigma=5                        BER 0.000  exact
+   crop: header 10% removed                      BER 0.000  exact
+   crop: footer 15% removed                      BER 0.000  exact
+   crop: 3px off left+top (grid misalignment)    BER 0.000  exact
+   crop: centre 50% only                         BER 0.000  exact
+   rescale x0.5                                  BER 0.000  exact
+   rescale x0.75                                 BER 0.000  exact
+   rescale x0.9                                  BER 0.000  exact
+   rescale x1.25                                 BER 0.000  exact
+   rescale x2.0                                  BER 0.000  exact
+   rotate 1 deg                                  BER 0.000  exact
+   rotate 2 deg                                  BER 0.000  exact
+   rotate 3 deg                                  BER 0.000  exact
+   rotate 5 deg                                  BER 0.000  exact
+   rotate 2 deg + jpeg q75                       BER 0.016  attributable
+   crop header + rescale x0.8 + jpeg q75         BER 0.016  attributable
+   print-and-scan simulation                     BER 0.492  LOST
+   photo-of-screen simulation                    BER 0.531  LOST
+
+====================================================================================================
+SUMMARY (8 images; 'attributable' = BER <= 0.125, i.e. <= 16 of 128 bits wrong)
+====================================================================================================
+attack                                          exact  attrib.  mean BER  worst BER
+baseline: lossless                               8/8     8/8     0.000      0.000
+jpeg q90                                         8/8     8/8     0.000      0.000
+jpeg q75                                         8/8     8/8     0.000      0.000
+jpeg q60                                         5/8     7/8     0.062      0.484
+jpeg q50                                         4/8     7/8     0.068      0.477
+gaussian noise sigma=5                           8/8     8/8     0.000      0.000
+crop: header 10% removed                         8/8     8/8     0.000      0.000
+crop: footer 15% removed                         8/8     8/8     0.000      0.000
+crop: 3px off left+top (grid misalignment)       8/8     8/8     0.000      0.000
+crop: centre 50% only                            8/8     8/8     0.000      0.000
+rescale x0.5                                     8/8     8/8     0.000      0.000
+rescale x0.75                                    8/8     8/8     0.000      0.000
+rescale x0.9                                     8/8     8/8     0.000      0.000
+rescale x1.25                                    8/8     8/8     0.000      0.000
+rescale x2.0                                     8/8     8/8     0.000      0.000
+rotate 1 deg                                     8/8     8/8     0.000      0.000
+rotate 2 deg                                     8/8     8/8     0.000      0.000
+rotate 3 deg                                     8/8     8/8     0.000      0.000
+rotate 5 deg                                     8/8     8/8     0.000      0.000
+rotate 2 deg + jpeg q75                          2/8     8/8     0.011      0.031
+crop header + rescale x0.8 + jpeg q75            0/8     7/8     0.098      0.500
+print-and-scan simulation                        1/8     3/8     0.317      0.547
+photo-of-screen simulation                       0/8     0/8     0.513      0.562
+
+extraction time: mean 4.03s, max 16.67s
