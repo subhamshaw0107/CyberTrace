@@ -1,0 +1,3 @@
+# Netlify redirects: Route all requests to the serverless function 'api'
+# Static files in public/ (e.g. /samples/*) are served automatically first.
+/*    /.netlify/functions/api    200
