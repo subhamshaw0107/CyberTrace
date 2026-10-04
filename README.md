@@ -5,7 +5,7 @@
 
 ## 1. What this is
 
-A complete, runnable, end-to-end prototype of the leak-attribution system described in PS 26237:
+A complete, runnable, end-to-end prototype of the leak-attribution system :
 a sender encrypts a document once, distributes it to multiple recipients, and — if any recipient's
 copy later leaks — the system can prove cryptographically **which specific recipient's decryption
 session** produced the leaked copy, using an invisible per-session watermark, a signature made with
