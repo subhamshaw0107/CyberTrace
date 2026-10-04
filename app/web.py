@@ -704,7 +704,10 @@ ICONS = {
     "eye": '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
     "eye-off": '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>',
     "copy": '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    "brain": '<path d="M12 4.5a2.5 2.5 0 0 0-4.96.44 2.5 2.5 0 0 0-2.96 3.08 3 3 0 0 0-.34 5.58 2.5 2.5 0 0 0 1.32 4.24 2.5 2.5 0 0 0 4.44 2.04V4.5z"/><path d="M12 4.5a2.5 2.5 0 0 1 4.96.44 2.5 2.5 0 0 1 2.96 3.08 3 3 0 0 1 .34 5.58 2.5 2.5 0 0 1-1.32 4.24 2.5 2.5 0 0 1-4.44 2.04V4.5z"/>',
+    "sparkles": '<path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z"/>',
 }
+
 
 
 def svg(name: str, size: int = 17, cls: str = "") -> str:
@@ -991,12 +994,195 @@ function loadManualTimeline(docId) {{
 </div>"""
 
 
-def create_app(ws: Workspace | None = None) -> Flask:
-    if ws is None:
-        from app.service import resolve_workspace_dir
-        ws = Workspace(resolve_workspace_dir())
-        ws.seed_demo_identities_if_empty()
-    app = Flask(__name__)
+def render_gemma_investigator_html(d: dict | None = None) -> str:
+    """Renders the Gemma 4 — AI Forensic Investigator component for the Forensic Trace UI."""
+    has_data = d is not None
+    d_json = json.dumps(d) if d else "{}"
+
+    get_state_msg = '<div style="font-size:13px;color:var(--muted);margin-top:10px">Upload a leaked file above to enable Gemma AI Investigation.</div>'
+
+    action_btn = (
+        f'''<div id="gemma-actions" style="margin-bottom:16px">
+    <button id="btn-run-gemma" class="btn" type="button" onclick="runGemmaInvestigation()" style="background:linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);border:none;box-shadow:0 4px 14px rgba(124,58,237,0.4);font-weight:600;padding:10px 20px;cursor:pointer">
+      {svg("sparkles", 16)} Investigate with Gemma
+    </button>
+  </div>''' if has_data else get_state_msg
+    )
+
+    return f"""
+<div class="card" id="gemma-investigator-section" style="margin-top:24px;border:1px solid rgba(139,92,246,0.3);background:linear-gradient(180deg, rgba(139,92,246,0.04) 0%, rgba(15,23,42,0.6) 100%)">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+    <h2 style="margin:0;display:flex;align-items:center;gap:10px;color:#a78bfa">
+      <span class="icon violet">{svg("brain", 18)}</span>
+      Gemma 4 — AI Forensic Investigator
+    </h2>
+    <span class="pill" style="background:rgba(139,92,246,0.15);color:#c084fc;border:1px solid rgba(168,85,247,0.3);font-size:12px;padding:3px 10px;border-radius:12px;font-weight:600">
+      Gemma 4 (26B) via Gemini API
+    </span>
+
+
+  </div>
+  <p class="sub" style="margin-bottom:16px">
+    Autonomous AI explanation layer analyzing non-secret forensic evidence, watermark signal confidence, multi-node ledger quorum, and post-quantum cryptographic signatures.
+  </p>
+  <hr class="sep">
+
+  {action_btn}
+
+  <div id="gemma-loading" style="display:none;padding:24px;text-align:center;color:#a78bfa;background:rgba(15,23,42,0.6);border-radius:8px;border:1px dashed rgba(139,92,246,0.3);margin-top:16px">
+    <div style="width:28px;height:28px;border:3px solid rgba(168,85,247,0.2);border-top-color:#c084fc;border-radius:50%;animation:gemma-spin 0.8s linear infinite;margin:0 auto 12px"></div>
+    <div style="font-weight:600;font-size:14px;color:#e2e8f0">Analyzing forensic evidence chain with Gemma...</div>
+    <div style="font-size:12.5px;color:var(--muted);margin-top:4px">Evaluating watermark recovery, ledger quorum verification, post-quantum signatures, and image distortions</div>
+  </div>
+
+  <div id="gemma-error" style="display:none;padding:16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;color:#fca5a5;margin-top:16px">
+    <div style="font-weight:600;display:flex;align-items:center;gap:8px">
+      {svg("alert", 16)} Gemma Investigation Notice
+    </div>
+    <div id="gemma-error-text" style="font-size:13px;margin-top:6px;line-height:1.5"></div>
+  </div>
+
+  <div id="gemma-results" style="display:none;margin-top:16px"></div>
+</div>
+
+<style>
+@keyframes gemma-spin {{
+  0% {{ transform: rotate(0deg); }}
+  100% {{ transform: rotate(360deg); }}
+}}
+</style>
+
+<script id="gemma-trace-payload" type="application/json">
+{d_json}
+</script>
+
+<script>
+function runGemmaInvestigation() {{
+  const btn = document.getElementById('btn-run-gemma');
+  const loading = document.getElementById('gemma-loading');
+  const errBox = document.getElementById('gemma-error');
+  const errText = document.getElementById('gemma-error-text');
+  const resBox = document.getElementById('gemma-results');
+  const payloadElem = document.getElementById('gemma-trace-payload');
+
+  if (!payloadElem) return;
+  let traceData;
+  try {{
+    traceData = JSON.parse(payloadElem.textContent);
+  }} catch(e) {{
+    alert('Failed to parse forensic trace payload.');
+    return;
+  }}
+
+  if (btn) {{
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+  }}
+  loading.style.display = 'block';
+  errBox.style.display = 'none';
+  resBox.style.display = 'none';
+
+  fetch('/api/forensics/investigate', {{
+    method: 'POST',
+    headers: {{ 'Content-Type': 'application/json' }},
+    body: JSON.stringify(traceData)
+  }})
+  .then(res => res.json())
+  .then(data => {{
+    loading.style.display = 'none';
+    if (btn) {{
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }}
+
+    if (!data.success) {{
+      errBox.style.display = 'block';
+      errText.textContent = data.error || 'Failed to complete Gemma investigation.';
+      return;
+    }}
+
+    const inv = data.investigation || {{}};
+    resBox.style.display = 'block';
+    
+    function esc(s) {{
+      if (!s) return '-';
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }}
+
+    resBox.innerHTML = `
+      <div style="display:grid;gap:14px">
+        <!-- 1. Investigation Summary -->
+        <div style="background:rgba(30,41,59,0.7);padding:16px 20px;border-radius:8px;border-left:4px solid #8b5cf6">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#c084fc;font-weight:700">1. Investigation Summary</div>
+          <div style="font-size:14px;color:var(--fg);margin-top:6px;line-height:1.5">${{esc(inv.investigation_summary)}}</div>
+        </div>
+
+        <!-- 2. Evidence Found -->
+        <div style="background:rgba(30,41,59,0.7);padding:16px 20px;border-radius:8px;border-left:4px solid #3b82f6">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#60a5fa;font-weight:700">2. Evidence Found</div>
+          <div style="font-size:13.5px;color:var(--fg);margin-top:6px;line-height:1.5">${{esc(inv.evidence_found)}}</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:12px">
+          <!-- 3. Watermark Analysis -->
+          <div style="background:rgba(30,41,59,0.5);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:11px;text-transform:uppercase;color:#94a3b8;font-weight:700">3. Watermark Analysis</div>
+            <div style="font-size:13px;margin-top:6px;line-height:1.45;color:#e2e8f0">${{esc(inv.watermark_analysis)}}</div>
+          </div>
+
+          <!-- 4. Trace ID Analysis -->
+          <div style="background:rgba(30,41,59,0.5);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:11px;text-transform:uppercase;color:#94a3b8;font-weight:700">4. Trace ID Analysis</div>
+            <div style="font-size:13px;margin-top:6px;line-height:1.45;color:#e2e8f0">${{esc(inv.trace_id_analysis)}}</div>
+          </div>
+
+          <!-- 5. Provenance Analysis -->
+          <div style="background:rgba(30,41,59,0.5);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:11px;text-transform:uppercase;color:#94a3b8;font-weight:700">5. Provenance Analysis</div>
+            <div style="font-size:13px;margin-top:6px;line-height:1.45;color:#e2e8f0">${{esc(inv.provenance_analysis)}}</div>
+          </div>
+
+          <!-- 6. Cryptographic Verification Analysis -->
+          <div style="background:rgba(30,41,59,0.5);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:11px;text-transform:uppercase;color:#94a3b8;font-weight:700">6. Cryptographic Verification</div>
+            <div style="font-size:13px;margin-top:6px;line-height:1.45;color:#e2e8f0">${{esc(inv.cryptographic_verification_analysis)}}</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:12px">
+          <!-- 7. Transformation/Robustness Analysis -->
+          <div style="background:rgba(30,41,59,0.5);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:11px;text-transform:uppercase;color:#94a3b8;font-weight:700">7. Transformation / Robustness</div>
+            <div style="font-size:13px;margin-top:6px;line-height:1.45;color:#e2e8f0">${{esc(inv.transformation_robustness_analysis)}}</div>
+          </div>
+
+          <!-- 8. Evidence Strength -->
+          <div style="background:rgba(30,41,59,0.5);padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:11px;text-transform:uppercase;color:#94a3b8;font-weight:700">8. Evidence Strength</div>
+            <div style="font-size:13.5px;margin-top:6px;line-height:1.45;font-weight:700;color:#38bdf8">${{esc(inv.evidence_strength)}}</div>
+          </div>
+        </div>
+
+        <!-- 9. Final Investigation Explanation -->
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(15,23,42,0.8) 100%);padding:18px 22px;border-radius:8px;border:1px solid rgba(16,185,129,0.35)">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:#34d399;font-weight:700">9. Final Investigation Explanation</div>
+          <div style="font-size:14.5px;color:#f8fafc;margin-top:8px;line-height:1.6;font-weight:500">${{esc(inv.final_investigation_explanation)}}</div>
+        </div>
+      </div>
+    `;
+  }})
+  .catch(err => {{
+    loading.style.display = 'none';
+    if (btn) {{
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }}
+    errBox.style.display = 'block';
+    errText.textContent = 'Network or server error while connecting to Gemma Investigator: ' + err.message;
+  }});
+}}
+</script>
+"""
 
 
 def create_app(ws: Workspace | None = None) -> Flask:
@@ -1005,6 +1191,7 @@ def create_app(ws: Workspace | None = None) -> Flask:
         ws = Workspace(resolve_workspace_dir())
         ws.seed_demo_identities_if_empty()
     app = Flask(__name__)
+
     app.secret_key = "cyber-trace-local-console"
     app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024
 
@@ -3017,6 +3204,7 @@ function submitUnlock(token) {{
                 tl_error = str(exc)
 
             timeline_html = render_incident_timeline_html(tl_res, tl_error=tl_error, doc_id=doc_id or "")
+            gemma_html = render_gemma_investigator_html(d)
 
             body = f"""
 {hero("Forensic trace", "Attribution report",
@@ -3035,9 +3223,11 @@ function submitUnlock(token) {{
     <table class="kv">{rows}</table>
   </div>
 </div>
-{timeline_html}"""
+{timeline_html}
+{gemma_html}"""
             return page("Trace", "trace", body)
 
+        gemma_get_html = render_gemma_investigator_html(None)
         body = f"""
 {hero("Forensic trace", "Identify the source of a leak",
       "Upload a leaked copy. The extractor searches for rotation, rescaling and cropping, then attribution requires both a ledger quorum and a valid post-quantum signature.")}
@@ -3064,8 +3254,26 @@ function submitUnlock(token) {{
     <p class="note">When the watermark is too damaged, the verdict is NO MATCH. The system never guesses a name.</p>
   </div>
 </div>
-{render_incident_timeline_html(None, None, is_get=True)}"""
+{render_incident_timeline_html(None, None, is_get=True)}
+{gemma_get_html}"""
         return page("Trace", "trace", body)
+
+    @app.route("/api/forensics/investigate", methods=["POST"])
+    @app.route("/investigate_gemma", methods=["POST"])
+    def api_forensic_investigate():
+        try:
+            from app.gemma_investigator import run_gemma_investigation
+            data = request.get_json(silent=True) or {}
+            if not data:
+                return json.dumps({"success": False, "error": "Missing forensic data payload"}), 400, {"Content-Type": "application/json"}
+            result = run_gemma_investigation(data)
+            return json.dumps(result, indent=2), 200, {"Content-Type": "application/json"}
+        except Exception as exc:
+            err_msg = str(exc)
+            api_key = os.environ.get("GEMINI_API_KEY", "")
+            if api_key and api_key in err_msg:
+                err_msg = err_msg.replace(api_key, "[REDACTED]")
+            return json.dumps({"success": False, "error": f"Investigation failed: {err_msg}"}), 500, {"Content-Type": "application/json"}
 
     @app.route("/api/forensics/<document_id>/timeline")
     def api_forensic_timeline(document_id: str):
@@ -3075,6 +3283,7 @@ function submitUnlock(token) {{
             return json.dumps(res, indent=2), 200, {"Content-Type": "application/json"}
         except Exception as exc:
             return json.dumps({"error": str(exc), "document_id": document_id, "events": []}), 500, {"Content-Type": "application/json"}
+
 
     @app.route("/api/status")
     def api_status():

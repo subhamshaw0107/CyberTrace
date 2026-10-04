@@ -9,6 +9,8 @@ Flask>=3.0.0
 gunicorn>=21.2.0
 serverless-wsgi>=3.0.0
 pyzipper>=0.4.0
+python-dotenv>=1.0.0
+
 
 # NOTE ON LIBOQS:
 # liboqs-python requires a precompiled liboqs C library (oqs.dll on Windows, liboqs.so on Linux).
