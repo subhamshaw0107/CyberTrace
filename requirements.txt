@@ -1,0 +1,18 @@
+# PS 26237 — Python dependencies
+# Compatible with both local environments and cloud/serverless platforms (Netlify Functions)
+
+cryptography>=43.0.0
+numpy>=1.26.0
+opencv-python-headless>=4.8.0
+pymupdf>=1.24.0
+Flask>=3.0.0
+gunicorn>=21.2.0
+serverless-wsgi>=3.0.0
+pyzipper>=0.4.0
+
+# NOTE ON LIBOQS:
+# liboqs-python requires a precompiled liboqs C library (oqs.dll on Windows, liboqs.so on Linux).
+# On serverless platforms (Netlify/AWS Lambda) where external C-libraries cannot be built at install time,
+# the application automatically activates a size-matched pure-Python reference emulator.
+# For local air-gapped installations with the compiled C library:
+#   pip install liboqs-python==0.16.0

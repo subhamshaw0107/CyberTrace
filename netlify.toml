@@ -1,0 +1,25 @@
+[build]
+  command = "pip install -r requirements.txt"
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  NETLIFY = "true"
+
+[functions]
+  included_files = [
+    "crypto/**",
+    "watermark/**",
+    "ledger/**",
+    "forensics/**",
+    "app/**"
+  ]
+
+# Route all incoming requests to the serverless function 'api'
+# Files matching public/ (like /samples/*) take precedence automatically.
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200
+  force = false
